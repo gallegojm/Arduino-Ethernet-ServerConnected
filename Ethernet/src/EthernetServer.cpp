@@ -67,6 +67,20 @@ EthernetClient EthernetServer::available()
   return EthernetClient(MAX_SOCK_NUM);
 }
 
+EthernetClient EthernetServer::connected()
+{
+  accept();
+  for( int sock = 0; sock < MAX_SOCK_NUM; sock++ )
+    if( EthernetClass::_server_port[sock] == _port )
+    {
+      EthernetClient client(sock);
+      if( client.status() == SnSR::ESTABLISHED ||
+          client.status() == SnSR::CLOSE_WAIT )
+        return client;
+    }
+  return EthernetClient(MAX_SOCK_NUM);
+}
+
 size_t EthernetServer::write(uint8_t b) 
 {
   return write(&b, 1);
